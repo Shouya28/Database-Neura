@@ -905,16 +905,16 @@ export async function neura(chatUpdate) {
    
     if (typeof m.text !== 'string')
       m.text = ''
-    if (opts['queque'] && m.text && !(isMods || isPrems)) {
-      let queque = this.msgqueque,
-        time = 1000 * 5
-      const previousID = queque[queque.length - 1]
-      queque.push(m.id || m.key.id)
-      setInterval(async function() {
-        if (queque.indexOf(previousID) === -1) clearInterval(this)
-        await delay(time)
-      }, time)
-    }
+    if (m.text && !(isMods || isPrems)) { 
+  let queque = this.msgqueque,
+    time = 1000 * 5;
+  const previousID = queque[queque.length - 1];
+  queque.push(m.id || m.key.id);
+  setInterval(async function() {
+    if (queque.indexOf(previousID) === -1) clearInterval(this);
+    await delay(time);
+  }, time);
+}
 
     if (m.isBaileys)
       return
@@ -1188,11 +1188,12 @@ if (plugin.age > _user.age) {
 } catch (e) {
   console.error(e)
 } finally {
-  if (opts['queque'] && m.text) {
-    const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id)
-    if (quequeIndex !== -1)
-      this.msgqueque.splice(quequeIndex, 1)
+  if (m.text) { 
+  const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id);
+  if (quequeIndex !== -1) {
+    this.msgqueque.splice(quequeIndex, 1);
   }
+}
   let user,
     stats = global.db.data.stats
   if (m) {

@@ -45,11 +45,9 @@ const clearSessions = () => {
             try {
                 if (isDirectory) {
                     rmSync(filePath, { recursive: true, force: true });
-                    console.log(chalk.yellow(`Cleared directory: ${file}`));
                     cleared++;
                 } else {
                     unlinkSync(filePath);
-                    console.log(chalk.yellow(`Removed file: ${file}`));
                     cleared++;
                 }
             } catch (err) {
@@ -58,9 +56,9 @@ const clearSessions = () => {
         }
         
         if (cleared > 0) {
-            console.log(chalk.green(`Sessions cleaned successfully! Cleared ${cleared} items`));
+            console.log(chalk.yellow(`Sessions cleaned successfully! Cleared ${cleared} items`));
         } else {
-            console.log(chalk.blue('No sessions needed to be cleaned'));
+            console.log(chalk.red('No sessions needed to be cleaned'));
         }
     } catch (err) {
         console.error(chalk.red(`Error accessing sessions folder: ${err.message}`));
@@ -112,7 +110,6 @@ global.loadDatabase = async function loadDatabase() {
 loadDatabase();
 
 const authFile = `${opts._[0] || 'sessions'}`;
-console.log(chalk.red(`Load AuthFile from ${authFile}`));
 const { state, saveCreds } = await useMultiFileAuthState(authFile);
 const { version, isLatest } = await fetchLatestBaileysVersion();
 
@@ -161,22 +158,22 @@ if (global.pairingAuth && !conn.authState.creds.registered) {
     }, 3000);
 }
 
-if (!opts['test']) {
-    setInterval(async () => {
-        if (global.db.data) await global.db.write().catch(console.error);
-    }, 30 * 1000);
-}
+setInterval(async () => {
+  if (global.db.data) {
+    await global.db.write().catch(console.error);
+  }
+}, 30 * 1000);
 
 async function connectionUpdate(update) {
     const { receivedPendingNotifications, connection, lastDisconnect, isOnline, isNewLogin } = update;
 
     if (isNewLogin) conn.isInit = true;
-    if (connection == 'connecting') console.log(chalk.blue('Activating Neura, please wait a moment...'));
+    if (connection == 'connecting') console.log(chalk.yellow('Activating Neura, please wait a moment...'));
     if (connection == 'open') {
         console.log(chalk.yellow('Connected successfully!'));
         
         if (!sessionCleanupDone) {
-            console.log(chalk.cyan('Initializing session cleanup...'));
+            console.log(chalk.yellow('Initializing session cleanup...'));
             setTimeout(() => {
                 clearSessions();
                 sessionCleanupDone = true;
@@ -191,9 +188,9 @@ async function connectionUpdate(update) {
             console.log(chalk.red('Error sending initial message:', err.message));
         }
     }
-    if (isOnline == true) console.log(chalk.rgb(0, 191, 255)('Active Status'));
+    if (isOnline == true) console.log(chalk.yellow('Active Status'));
     if (isOnline == false) console.log(chalk.red('Dead Status'));
-    if (receivedPendingNotifications) console.log(chalk.rgb(135, 206, 235)('waiting for new message'));
+    if (receivedPendingNotifications) console.log(chalk.yellow('waiting for new message'));
     if (connection == 'close') {
         console.log(chalk.red('Connection closed, attempting to reconnect...'));
         const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
