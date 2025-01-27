@@ -113,8 +113,8 @@ neura.all = async function(m) {
         vcard: `BEGIN:VCARD\nVERSION:3.0\nN:XL;${global.infoo.wm},;;;\nFN:${global.infoo.wm},\nitem1.TEL;waid=${m.sender.split(
           "@"
         )[0]}:${m.sender.split("@")[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`,
-        jpegThumbnail: fs.readFileSync("./media/thumbnail.jpg"),
-        thumbnail: fs.readFileSync("./media/thumbnail.jpg"),
+        jpegThumbnail: `https://files.catbox.moe/upnh15.jpg`,
+        thumbnail: `https://files.catbox.moe/upnh15.jpg`,
         sendEphemeral: true,
       },
     },
