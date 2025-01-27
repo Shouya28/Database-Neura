@@ -1110,7 +1110,7 @@ if (plugin.level > _user.level) {
     `Your level must be above ${plugin.level} to use this command.`,
     'ACCESS DENIED',
     global.infoo.wm,
-    fs.readFileSync('./media/denied.jpg'),
+    global.denied,
     "",
     m,
     false
@@ -1124,7 +1124,7 @@ if (plugin.age > _user.age) {
     `Your age must be above ${plugin.age} to use this command.`,
     'ACCESS DENIED',
     global.infoo.wm,
-    fs.readFileSync('./media/denied.jpg'),
+    global.denied,
     global.linkk.website,
     m,
     false
@@ -1268,7 +1268,7 @@ export async function participantsUpdate({ id, participants, action }) {
         let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
         for (let user of participants) {
           let name = global?.db?.data?.users?.[user]?.registered ? global?.db?.data?.users?.[user]?.name : this.getName(user)
-          let pp = await this.profilePictureUrl(user, 'image').catch(_ => fs.readFileSync('./media/avatar_contact.png'))
+          let pp = await this.profilePictureUrl(user, 'image').catch(_ => `https://files.catbox.moe/i3fvd1.jpg`)
           let img = await welcomeBanner(pp, name, await this.getName(id), "welcome")
           text = chat.sWelcome || this.welcome || conn.welcome || 'Welcome, @user'
           text = text.replace('@subject', await this.getName(id)).replace('@desc', groupMetadata.desc?.toString() || 'unknow').replace('@user', "@" + user.split("@")[0])
@@ -1282,7 +1282,7 @@ export async function participantsUpdate({ id, participants, action }) {
         let groupMetadata = await this.groupMetadata(id) || (conn.chats[id] || {}).metadata
         for (let user of participants) {
           let name = global?.db?.data?.users?.[user]?.registered ? global?.db?.data?.users?.[user]?.name : this.getName(user)
-          let pp = await this.profilePictureUrl(user, 'image').catch(_ => fs.readFileSync('./media/avatar_contact.png'))
+          let pp = await this.profilePictureUrl(user, 'image').catch(_ => `https://files.catbox.moe/i3fvd1.jpg`)
           let img = await welcomeBanner(pp, name, await this.getName(id), "bye")
           text = chat.sBye || this.bye || conn.bye || 'Bye @user'
           text = text.replace('@subject', await this.getName(id)).replace('@desc', groupMetadata.desc?.toString() || 'unknow').replace('@user', "@" + user.split("@")[0])
@@ -1358,7 +1358,7 @@ global.dfail = (type, m, conn) => {
     restrict: global.msg.restrict,
     unreg: global.msg.unreg
   } [type]
-  if (msg) return conn.adReply(m.chat, msg, 'D E C L I N E', global.infoo.wm, fs.readFileSync('./media/denied.jpg'), "", m, false)
+  if (msg) return conn.adReply(m.chat, msg, 'D E C L I N E', global.infoo.wm, global.denied, "", m, false)
 }
 
 let file = global.__filename(import.meta.url, true)
