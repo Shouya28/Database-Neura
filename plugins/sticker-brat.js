@@ -1,3 +1,11 @@
+/*
+ * Neura — Community  
+ * WhatsApp Channel: https://whatsapp.com/channel/0029VayjbFK4inonCYjGj42l
+ * GitHub: https://github.com/Shouya28  
+ * Contact: https://wa.me/62895324429899  
+ * Please retain this watermark. Thank you!  
+ */
+ 
 import axios from 'axios';
 import { execSync } from 'child_process';
 import fs from 'fs';
