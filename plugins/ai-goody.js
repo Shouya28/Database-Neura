@@ -1,10 +1,11 @@
 /*
  * Neura — Community 
+ * Saluran WhatsApp: https://whatsapp.com/channel/0029VayjbFK4inonCYjGj42l
  * GitHub: https://github.com/Shouya28
  * WhatsApp: https://wa.me/62895324429899
  * Hi everyone this is my wm don't delete it!
  */
-
+ 
 import axios from "axios";
 
 class AI {
