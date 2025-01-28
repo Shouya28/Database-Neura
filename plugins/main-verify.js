@@ -19,7 +19,7 @@ let neura = async function(m, {
   let g = ["cowok", "cewek"]
   let ha = g.getRandom()
   let user = global.db.data.users[m.sender]
-  if (user.registered !== false) return m.reply( 'Kamu Sudah mendaftar!!\nIngin daftar ulang? ketik unreg')
+  if (user.registered !== false) return m.reply( 'Kamu Sudah mendaftar!!\nIngin daftar ulang? ketik .unreg')
   let nama = conn.getName(m.sender)
   const pp = await conn.profilePictureUrl(m.sender, "image").catch((_) => "https://i.ibb.co/3Fh9V6p/avatar-contact.png")
   let ran = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
