@@ -6,26 +6,36 @@
  * Please retain this watermark. Thank you!  
  */
 
+import PhoneNumber from "awesome-phonenumber";
 import { promises } from "fs";
 import { join } from "path";
-import moment from "moment-timezone";
-import fs from "fs";
+import fetch from "node-fetch";
 import { xpRange } from "../lib/levelling.js";
+import moment from "moment-timezone";
+import os from "os";
+import fs from "fs";
 
-const tags = {
-  main: "Main Features",
-  game: "Game Features",
-  rpg: "RPG Games",
-  xp: "Experience & Limits",
-  sticker: "Sticker Tools",
-  owner: "Owner Features",
-  group: "Group Management",
-  downloader: "Download Tools",
-  tools: "Utility Menu",
-  ai: "AI Tools",
-  internet: "Internet Features",
-  islami: "Islamic Tools",
-  maker: "Creative Tools",
+let tags = {
+  main: "MAIN MENU",
+  anime: "ANIME",
+  game: "GAMES",
+  rpg: "RPG GAMES",
+  bank: "BANKING",
+  database: "DATABASE",
+  fun: "FUN STUFF",
+  info: "INFO",
+  sticker: "STICKER MAKER",
+  owner: "BOT OWNER",
+  group: "GROUP TOOLS",
+  dl: "DOWNLOAD",
+  tools: "TOOLS",
+  jadian: "RELATIONSHIP STATUS",
+  quotes: "QUOTES",
+  random: "RANDOM FUN",
+  ai: "AI TOOLS",
+  internet: "INTERNET TOOLS",
+  islamic: "ISLAMIC CONTENT",
+  maker: "CONTENT MAKER",
 };
 
 const defaultMenu = {
@@ -51,167 +61,216 @@ const defaultMenu = {
 - *Total hit:* %totalHits
 %readmore`,
   header: "*—%category*",
-  body: "⳺ %cmd",
+  body: "⳺ %cmd %islimit %isPremium",
   footer: "",
   after: "",
 };
 
-const getUptime = () => {
-  const _uptime = process.uptime() * 1000;
-  return clockString(_uptime);
-};
-
-const getMuptime = async () => {
+let neura = async (m, { conn, usedPrefix, __dirname }) => {
+  let wib = moment.tz("Asia/Jakarta").format("HH:mm:ss");
+  let _package = JSON.parse(await promises.readFile(join(__dirname, "../package.json")).catch((_) => ({}))) || {};
+  let { age, exp, level, role } = global.db.data.users[m.sender] || {};
+  let { min, xp, max } = xpRange(level, global.multiplier);
+  let tag = `@${m.sender.split("@")[0]}`;
+  let mode = global.opts["self"] ? "Self" : "Public";
+  let user = global.db.data.users[m.sender] || {};
+  let limit = user.premiumTime >= 1 || m.sender.split`@` [0] == infoo.nomorown ? "Infinity" : user.limit;
+  let name = `${user.registered ? user.name : conn.getName(m.sender)}`;
+  let status = `${m.sender.split`@`[0] == infoo.nomorown ? "Developer" : user.premiumTime >= 1 ? "Premium User" : user.level >= 1000 ? "Elite User" : "Free User"}`;
+  let totalHits = Object.values(global.db.data.stats).reduce((acc, stat) => acc + stat.total, 0);
+  let who = m.mentionedJid && m.mentionedJid[0] ? m.mentionedJid[0] : m.fromMe ? conn.user.jid : m.sender;
+  let d = new Date(new Date() + 3600000);
+  let locale = "id";
+  let weton = ["Pahing", "Pon", "Wage", "Kliwon", "Legi"][Math.floor(d / 84600000) % 5];
+  let week = d.toLocaleDateString(locale, { weekday: "long" });
+  let date = d.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
+  let dateIslamic = Intl.DateTimeFormat(locale + "-TN-u-ca-islamic", { day: "numeric", month: "long", year: "numeric" }).format(d);
+  let time = d.toLocaleTimeString(locale, { hour: "numeric", minute: "numeric", second: "numeric" });
+  let _uptime = process.uptime() * 1000;
+  let _muptime;
   if (process.send) {
     process.send("uptime");
-    const _muptime = await new Promise((resolve) => {
+    _muptime = (await new Promise((resolve) => {
       process.once("message", resolve);
       setTimeout(resolve, 1000);
-    });
-    return clockString(_muptime * 1000);
+    })) * 1000;
   }
-  return clockString(0);
-};
-
-const getDateTime = () => {
-  const d = new Date();
-  const locale = "id";
-  const weton = ["Pahing", "Pon", "Wage", "Kliwon", "Legi"][Math.floor(d / 84600000) % 5];
-  const week = d.toLocaleDateString(locale, { weekday: "long" });
-  const date = d.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
-  const dateIslamic = Intl.DateTimeFormat(locale + "-TN-u-ca-islamic", { day: "numeric", month: "long", year: "numeric" }).format(d);
-  const time = d.toLocaleTimeString(locale, { hour: "numeric", minute: "numeric", second: "numeric" });
-  return { weton, week, date, dateIslamic, time };
-};
-
-const clockString = (ms) => {
-  const h = isNaN(ms) ? "--" : Math.floor(ms / 3600000);
-  const m = isNaN(ms) ? "--" : Math.floor(ms / 60000) % 60;
-  const s = isNaN(ms) ? "--" : Math.floor(ms / 1000) % 60;
-  return [h, m, s].map((v) => v.toString().padStart(2, 0)).join(":");
-};
-
-const neura = async (m, { conn, usedPrefix, __dirname }) => {
-  try {
-    const { age, exp, level, role } = global.db.data.users[m.sender];
-    const { min, xp, max } = xpRange(level, global.multiplier);
-    const tag = `@${m.sender.split("@")[0]}`;
-    const mode = global.opts["self"] ? "Self" : "Public";
-    const user = global.db.data.users[m.sender];
-    const limit = user.premiumTime >= 1 || m.sender.split`@` [0] == infoo.nomorown ? "Infinity" : user.limit;
-    const name = user.registered ? user.name : conn.getName(m.sender);
-    const status = m.sender.split`@` [0] == infoo.nomorown ? "Developer" : user.premiumTime >= 1 ? "Premium User" : user.level >= 1000 ? "Elite User" : "Free User";
-    const totalHits = Object.values(global.db.data.stats).reduce((acc, stat) => acc + stat.total, 0);
-    const totalreg = Object.keys(global.db.data.users).length;
-    const rtotalreg = Object.values(global.db.data.users).filter(user => user.registered).length;
-    const { weton, week, date, dateIslamic, time } = getDateTime();
-    const uptime = getUptime();
-    const muptime = await getMuptime();
-
-    const replace = {
-      "%": "%",
-      p: usedPrefix,
-      uptime,
-      muptime,
-      me: conn.getName(conn.user.jid),
-      exp: exp - min,
-      maxexp: xp,
-      totalexp: exp,
-      xp4levelup: max - exp,
-      level,
-      limit,
-      name,
-      weton,
-      week,
-      date,
-      dateIslamic,
-      time,
-      totalreg,
-      rtotalreg,
-      role,
-      tag,
-      status,
-      mode,
-      wib: moment.tz("Asia/Jakarta").format("HH:mm:ss"),
-      age,
-      totalHits,
-      readmore: readMore,
-    };
-
-    let text = defaultMenu.before;
-    Object.keys(tags).forEach(tag => {
-      text += `\n${defaultMenu.header.replace(/%category/g, tags[tag])}\n`;
-      text += help
-        .filter(menu => menu.tags && menu.tags.includes(tag) && menu.help)
-        .map(menu => menu.help.map(help => defaultMenu.body
-          .replace(/%cmd/g, menu.prefix ? help : "%p" + help)
-          .replace(/%islimit/g, menu.limit ? "�" : "")
-          .replace(/%isPremium/g, menu.premium ? "🅟" : "")
-          .trim()
-        ).join("\n")).join("\n");
-      text += `\n${defaultMenu.footer}`;
+  let muptime = clockString(_muptime);
+  let uptime = clockString(_uptime);
+  let totalreg = Object.keys(global.db.data.users).length;
+  let rtotalreg = Object.values(global.db.data.users).filter((user) => user.registered == true).length;
+  let help = Object.values(global.plugins)
+    .filter((plugin) => !plugin.disabled)
+    .map((plugin) => {
+      return {
+        help: Array.isArray(plugin.tags) ? plugin.help : [plugin.help],
+        tags: Array.isArray(plugin.tags) ? plugin.tags : [plugin.tags],
+        prefix: "customPrefix" in plugin,
+        limit: plugin.limit,
+        premium: plugin.premium,
+        enabled: !plugin.disabled,
+      };
     });
-    text += `\n${defaultMenu.after}`;
+  for (let plugin of help)
+    if (plugin && "tags" in plugin)
+      for (let tag of plugin.tags)
+        if (!(tag in tags) && tag) tags[tag] = tag;
+  conn.menu = conn.menu ? conn.menu : {};
+  let before = conn.menu.before || defaultMenu.before;
+  let header = conn.menu.header || defaultMenu.header;
+  let body = conn.menu.body || defaultMenu.body;
+  let footer = conn.menu.footer || defaultMenu.footer;
+  let after = conn.menu.after || (conn.user.jid == global.conn.user.jid ? "" : `Powered by https://wa.me/${global.conn.user.jid.split`@`[0]}`) + defaultMenu.after;
+  let _text = [
+    before,
+    ...Object.keys(tags).map((tag) => {
+      return (
+        header.replace(/%category/g, tags[tag]) +
+        "\n" + [
+          ...help
+          .filter((menu) => menu.tags && menu.tags.includes(tag) && menu.help)
+          .map((menu) => {
+            return menu.help
+              .map((help) => {
+                return body
+                  .replace(/%cmd/g, menu.prefix ? help : "%p" + help)
+                  .replace(/%islimit/g, menu.limit ? "🅛" : "")
+                  .replace(/%isPremium/g, menu.premium ? "🅟" : "")
+                  .trim();
+              })
+              .join("\n");
+          }),
+          footer,
+        ].join("\n")
+      );
+    }),
+    after,
+  ].join("\n");
+  let text = typeof conn.menu == "string" ? conn.menu : typeof conn.menu == "object" ? _text : "";
+  let replace = {
+    "%": "%",
+    p: usedPrefix,
+    uptime,
+    muptime,
+    me: conn.getName(conn.user.jid),
+    npmname: _package.name,
+    npmdesc: _package.description,
+    version: _package.version,
+    exp: exp - min,
+    maxexp: xp,
+    totalexp: exp,
+    xp4levelup: max - exp,
+    github: _package.homepage ? _package.homepage.url || _package.homepage : "[unknown github url]",
+    level,
+    limit,
+    name,
+    weton,
+    week,
+    date,
+    dateIslamic,
+    time,
+    totalreg,
+    rtotalreg,
+    role,
+    tag,
+    status,
+    mode,
+    wib,
+    age,
+    totalHits,
+    readmore: readMore,
+  };
 
-    text = text.replace(
-      new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, "g"),
-      (_, name) => "" + replace[name]
-    );
-
-    await conn.sendMessage(m.key.remoteJid, {
-      document: fs.readFileSync("./package.json"),
-      mimetype: global.doc,
-      fileName: ucapan,
-      name,
-      fileLength: 2025,
-      pageCount: 2025,
-      caption: text,
-      footer: `${infoo.wm} ` + infoo.versi,
-      buttons: [
-        { buttonId: '.owner', buttonText: { displayText: 'My Owner' }, type: 1 },
-        { buttonId: '.sewa', buttonText: { displayText: 'Sewa Bot' }, type: 1 },
-        {
-          buttonId: 'action',
-          buttonText: { displayText: 'ini pesan interactiveMeta' },
-          type: 4,
-          nativeFlowInfo: {
-            name: 'single_select',
-            paramsJson: JSON.stringify({
-              title: 'Menu list',
-              sections: [{
-                title: infoo.wm,
-                highlight_label: 'Favorite',
-                rows: [{ header: infoo.wm, title: 'coming soon', description: '404 ', id: '.logs' }]
-              }]
-            })
-          }
-        }
-      ],
-      contextInfo: {
-        mentionedJid: [m.sender],
-        externalAdReply: {
-          thumbnailUrl: thumbnail.getRandom(),
-          mediaUrl: thumbnail.getRandom(),
-          mediaType: 1,
-          sourceUrl: linkk.tt,
-          renderLargerThumbnail: true,
-          title: infoo.wm,
-          body: `Halo ` + name
-        }
+  let group = global.db.data.bots.link.group;
+  text = text.replace(
+    new RegExp(`%(${Object.keys(replace).sort((a, b) => b.length - a.length).join`|`})`, "g"),
+    (_, name) => "" + replace[name]
+  );
+  let globall = global.db.data.bots;
+  await conn.sendMessage(m.key.remoteJid, {
+    document: fs.readFileSync("./package.json"),
+    mimetype: global.doc,
+    fileName: ucapan,
+    name,
+    fileLength: 2025,
+    pageCount: 2025,
+    caption: text,
+    footer: `${infoo.wm} ` + infoo.versi,
+    buttons: [{
+        buttonId: '.owner',
+        buttonText: {
+          displayText: 'My Owner'
+        },
+        type: 1
       },
-      headerType: 1,
-      viewOnce: true
-    }, { quoted: fwa });
-  } catch (e) {
-    throw e;
-  }
+      {
+        buttonId: '.sewa',
+        buttonText: {
+          displayText: 'Sewa Bot'
+        },
+        type: 1
+      },
+      {
+        buttonId: 'action',
+        buttonText: {
+          displayText: 'ini pesan interactiveMeta'
+        },
+        type: 4,
+        nativeFlowInfo: {
+          name: 'single_select',
+          paramsJson: JSON.stringify({
+            title: 'Menu list',
+            sections: [{
+              title: infoo.wm,
+              highlight_label: 'Favorite',
+              rows: [{
+                  header: infoo.wm,
+                  title: 'coming soon',
+                  description: '404 ',
+                  id: '.logs'
+                }
+              ]
+            }]
+          })
+        }
+      }
+    ],
+    contextInfo: {
+      mentionedJid: [m.sender],
+      externalAdReply: {
+        thumbnailUrl: thumbnail.getRandom(),
+        mediaUrl: thumbnail.getRandom(),
+        mediaType: 1,
+        sourceUrl: linkk.tt,
+        renderLargerThumbnail: true,
+        title: infoo.wm,
+        body: `Halo ` + name
+      }
+    },
+    headerType: 1,
+    viewOnce: true
+  }, { quoted: fwa });
 };
 
 neura.help = ["menu"];
 neura.tags = ["main"];
 neura.command = /^(menu)$/i;
 neura.register = true;
+neura.error = 0;
 
 export default neura;
 const more = String.fromCharCode(8206);
 const readMore = more.repeat(4001);
+
+function clockString(ms) {
+  let h = isNaN(ms) ? "--" : Math.floor(ms / 3600000);
+  let m = isNaN(ms) ? "--" : Math.floor(ms / 60000) % 60;
+  let s = isNaN(ms) ? "--" : Math.floor(ms / 1000) % 60;
+  return [h, m, s].map((v) => v.toString().padStart(2, 0)).join(":");
+}
+
+function getRandom() {
+  if (Array.isArray(this) || this instanceof String)
+    return this[Math.floor(Math.random() * this.length)];
+  return Math.floor(Math.random() * this);
+}

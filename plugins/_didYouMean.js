@@ -7,7 +7,6 @@
  */
  
 const neura = m => m;
-
 function calculateSimilarity(str1, str2) {
   str1 = str1.toLowerCase();
   str2 = str2.toLowerCase();
