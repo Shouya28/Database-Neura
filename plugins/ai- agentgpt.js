@@ -80,8 +80,7 @@ neura.before = async (m, { conn }) => {
 
 neura.help = ["agentgpt"];
 neura.tags = ["ai"];
-neura.command = /^(agentgpt)$/i;
-neura.limit = true;
+neura.command = ["agentgpt"];
 neura.error = 0;
 
 export default neura;

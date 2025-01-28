@@ -36,7 +36,7 @@ const neura = async (m, { conn }) => {
 };
 
 neura.help = ['ping'];
-neura.tags = ['main'];
+neura.tags = ['info'];
 neura.command = ['ping', 'speed'];
 
 export default neura;

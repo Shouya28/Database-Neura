@@ -44,7 +44,7 @@ const neura = async (m, { conn, args, usedPrefix, command }) => {
 
 neura.help = ["dukun"];
 neura.tags = ["ai"];
-neura.command = /^(dukun)$/i;
+neura.command = ["dukun"];
 neura.error = 0;
 
 export default neura;
