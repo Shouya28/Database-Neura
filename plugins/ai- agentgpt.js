@@ -39,13 +39,13 @@ async function AgentGpt(question) {
   return parsedResult.action_input;
 }
 
-const neura = async (m, { conn, args }) => {
+const neura = async (m, { conn, args, usedPrefix, command}) => {
   if (!db.data.dbai) db.data.dbai = {};
   if (!db.data.dbai.agentgpt) db.data.dbai.agentgpt = {};
 
   const inputText = args.length ? args.join(" ") : m.quoted?.text || m.quoted?.caption || m.quoted?.description || null;
 
-  if (!inputText) return conn.reply(m.chat, `Please provide the prompt for AgentGpt AI`, m);
+  if (!inputText) return conn.reply(m.chat, `✦ *Example:* ${usedPrefix + command} Halo`, m);
 
   if (db.data.dbai.agentgpt[m.key.id]) return;
 
@@ -54,7 +54,7 @@ const neura = async (m, { conn, args }) => {
 
   if (!answer) throw new Error("Response is empty or invalid.");
 
-  await conn.reply(m.chat, "*Answer from AgentGPT:*\n" + answer, m);
+  await conn.reply(m.chat, `*Answer from ${command} AI:*\n`+ answer, fwa);
 
   db.data.dbai.agentgpt[m.sender] = { key: { id: m.key.id } };
   delete db.data.dbai.agentgpt[m.key.id];
@@ -73,7 +73,7 @@ neura.before = async (m, { conn }) => {
 
     if (!answer) throw new Error("Response is empty or invalid.");
 
-    await conn.reply(m.chat, "*jawaban dari agentgpt*\n\n" + answer, fwa);
+    await conn.reply(m.chat, `*Answer from ${command} AI:*\n` + answer, fwa);
     db.data.dbai.agentgpt[m.sender].key.id = m.key.id;
   }
 };

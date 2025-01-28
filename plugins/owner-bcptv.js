@@ -12,7 +12,7 @@ const neura = async (m, { conn, usedPrefix, command, args }) => {
   const mime = (m.quoted ? m.quoted : m.msg).mimetype || '';
 
   if (!/video/g.test(mime)) {
-    return m.reply(`Balas video dengan perintah\n\n${usedPrefix + command} all/id group`);
+    return m.reply(`✦ *Example:*${usedPrefix + command} all/id group`);
   }
 
   const media = await q.download?.();
@@ -34,13 +34,13 @@ const neura = async (m, { conn, usedPrefix, command, args }) => {
   } else {
     const groupIds = args.filter(arg => arg.endsWith("@g.us")); 
     if (groupIds.length === 0) {
-      return m.reply(`Gunakan format:\n${usedPrefix + command} all\nAtau\n${usedPrefix + command} id group ...`);
+     return m.reply(`✦ *Example:*${usedPrefix + command} all or id group`);
     }
     targetGroups = groups.filter(group => groupIds.includes(group.id));
   }
 
   if (targetGroups.length === 0) {
-    return m.reply("Tidak ada grup yang ditemukan dengan ID yang diberikan.");
+    return m.reply("*404* No groups found with the given ID.");
   }
 
   let successCount = 0;
@@ -52,7 +52,7 @@ const neura = async (m, { conn, usedPrefix, command, args }) => {
     await new Promise(resolve => setTimeout(resolve, 1000)); 
   }
 
-  await m.reply(`*Broadcast PTV selesai*\n\nBerhasil terkirim ke ${successCount} dari ${targetGroups.length} grup`);
+  await m.reply(`*Broadcast PTV selesai*\nBerhasil terkirim ke ${successCount} dari ${targetGroups.length} grup`);
 };
 
 neura.help = ['bcptv'];

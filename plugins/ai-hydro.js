@@ -24,14 +24,14 @@ const hydro = {
   }
 }
 
-export async function neura(m, { conn, text }) {
+export async function neura(m, { conn, text, usedPrefix, command }) {
   if (!text) {
-    return m.reply('Please provide the prompt for Hydro AI')
+    return m.reply(`✦ *Example:* ${usedPrefix + command} Halo`)
   }
 
   const prompt = text.trim()
   const response = await hydro.ask({ content: prompt })
-  conn.reply(m.chat, `*Answer from Hydro Ai:*\n${response}`, fwa)
+  conn.reply(m.chat, `*Answer from ${command} AI:*\n${response}`, fwa)
 }
 
 neura.command = ['hydro'];
