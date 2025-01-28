@@ -63,7 +63,7 @@ export async function neura(m, { conn, text }) {
 
 neura.command = ['capcut'];
 neura.help = ['capcut'];
-neura.tags = ['downloader'];
+neura.tags = ['dl'];
 neura.error = 0;
 
 export default neura;
