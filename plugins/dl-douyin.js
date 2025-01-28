@@ -81,8 +81,8 @@ const neura = async (m, { conn, text, command, usedPrefix }) => {
   }
 };
 
-neura.command = /^(douyin|dy)$/i;
-neura.help = ["douyin"];
+neura.command = ["douyin", "dy", "tiktok", "tt"]
+neura.help = ["douyin", "tiktok"];
 neura.tags = ["dl"];
 neura.error = 0;
 
