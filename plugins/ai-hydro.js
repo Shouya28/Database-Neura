@@ -31,12 +31,13 @@ export async function neura(m, { conn, text }) {
 
   const prompt = text.trim()
   const response = await hydro.ask({ content: prompt })
-  m.reply(`*Answer from Hydro Ai:*\n${response}`)
+  conn.reply(m.chat, `*Answer from Hydro Ai:*\n${response}`, fwa)
 }
 
-neura.command = ['hydro']
-neura.help = ['hydro']
-neura.tags = ['ai']
+neura.command = ['hydro'];
+neura.help = ['hydro'];
+neura.tags = ['ai'];
 neura.premium = true;
+neura.error = 0;
 
 export default neura
