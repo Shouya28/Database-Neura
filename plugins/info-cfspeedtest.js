@@ -19,7 +19,7 @@ const neura = async (m, { conn }) => {
   const city = serverLocationData[colo];
   const maskedIp = ip ? `${ip.slice(0, 7)}***` : "Unknown";
 
-  let output = "*CF Speed Test*\n";
+  let output = "乂 *CF Speed Test*\n";
   output += logInfo("Server location", `${city} (${colo})`);
   output += logInfo("Your IP", `${maskedIp} (${loc})`);
   output += logLatency(ping);
