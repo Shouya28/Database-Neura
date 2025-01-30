@@ -44,12 +44,12 @@ async function capcutdl(url) {
 
 export async function neura(m, { conn, text }) {
   if (!text) {
-    return m.reply('Masukkan URL CapCut');
+    return m.reply(`✦ *Example:* ${usedPrefix + command} https://www.capcut.com/t/Zs8UJ97oD/`);
   }
 
   const result = await capcutdl(text);
   if (!result) {
-    return m.reply('Gagal mengambil video');
+    return m.reply('*404* Gagal mengambil video');
   }
 
   const caption = `*CAPCUT DOWNLOADER*\n` +

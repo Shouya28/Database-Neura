@@ -7,7 +7,6 @@
  */
 
 import fetch from "node-fetch";
-
 async function AgentGpt(question) {
   const url = "https://mylangchain.vercel.app/api/agentchat";
   const headers = {

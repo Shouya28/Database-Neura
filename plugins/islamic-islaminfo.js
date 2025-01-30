@@ -104,7 +104,7 @@ results.forEach(({ title, link, category, author, date }) => {
 
 neura.command = ["islaminews", "islamisearch"];
 neura.help = ["islaminews", "islamisearch"];
-neura.tags = ["Islamic"];
+neura.tags = ["islamic"];
 neura.error = 0;
 
 export default neura;

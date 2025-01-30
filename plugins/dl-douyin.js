@@ -80,6 +80,7 @@ const neura = async (m, { conn, text, command, usedPrefix }) => {
     const videoUrl = downloadUrls[0];
     const video = await axios.get(videoUrl, { responseType: "arraybuffer" });
     const videoBuffer = Buffer.from(video.data);
+    await conn.sendReact(m.chat, '✨', m.key);
     await conn.sendFile(m.chat, videoBuffer, "video.mp4", `*Judul:* ${title}`, m);
 
     const musicUrl = downloadUrls[downloadUrls.length - 1];
