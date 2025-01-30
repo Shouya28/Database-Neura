@@ -20,7 +20,7 @@ const neura = async (m, { conn, args, usedPrefix, command }) => {
   if (!inputText) {
     return conn.sendMessage(
       m.chat,
-      { text: `✦ *Format salah!*\n_Masukkan nama atau teks untuk bertanya kepada dukun._\n\nContoh:\n> ${usedPrefix}${command} Nama Anda` },
+      { text: `✦ *Example:* ${usedPrefix + command} Agus` },
       { quoted: m }
     );
   }

@@ -66,14 +66,20 @@ class AI {
 }
 
 const neura = async (m, { text, usedPrefix, command }) => {
+  // Jika pengguna membalas pesan dan tidak ada teks yang diberikan
+  if (m.quoted && !text) {
+    text = m.quoted.text; // Gunakan teks dari pesan yang dibalas
+  }
+
+  // Jika tidak ada teks yang diberikan dan tidak ada pesan yang dibalas
   if (!text) {
     return m.reply(
       `✦ *Format salah !*
 
-*Masukan teks atau reply pesan yang ingin*
+*Masukkan teks atau balas pesan yang ingin*
 *kamu tanyakan kepada ${command}*
 
-> Example:
+> Contoh:
 > ${usedPrefix + command} Halo`, m.chat, { quoted: m });
   }
 
@@ -81,9 +87,9 @@ const neura = async (m, { text, usedPrefix, command }) => {
   const res = await ai.GoodyAI(text);
 
   if (res) {
-    await m.reply(`*Answer from ${command}:*\n` + res, m.chat, { quoted: fwa });
+    await m.reply(`*Jawaban dari ${command}:*\n` + res, m.chat, { quoted: m });
   } else {
-    console.error("No response from GoodyAI");
+    console.error("Tidak ada respons dari GoodyAI");
     await m.reply("Terjadi kesalahan saat memproses permintaan", m.chat, { quoted: m });
   }
 }

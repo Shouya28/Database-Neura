@@ -649,7 +649,7 @@ export async function neura(chatUpdate) {
         if (!isNumber(settings.expiredCD)) settings.expiredCD = 0
         if (!isNumber(settings.premiumCD)) settings.premiumCD = 0
         if (!('loading' in settings)) settings.loading = true
-        if (!('adReply' in settings)) settings.adReply = true 
+        if (!('adReply' in settings)) settings.adReply = false 
         if (!('smlcap' in settings)) settings.smlcap = true
         if (!isNumber(settings.dailyReset)) settings.dailyReset = 0
       } else global.db.data.settings[this.user.jid] = {
@@ -672,7 +672,7 @@ export async function neura(chatUpdate) {
         expiredCD: 0,
         premiumCD: 0,
         loading: true,
-        adReply: true,
+        adReply: false,
         smlcap: true,
         dailyReset: 0
       }

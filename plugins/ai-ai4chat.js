@@ -44,12 +44,8 @@ const neura = async (m, { conn, args, usedPrefix, command }) => {
     m.quoted?.text || m.quoted?.caption || m.quoted?.description || null;
 
   if (!inputText) {
-    return conn.reply(m.chat,
-      `✦ *Format salah !*\n\n` +
-      `*Masukan teks atau reply pesan yang ingin*\n` +
-      `*kamu tanyakan kepada ai4chat*\n\n` +
-      `> Example:\n` +
-      `> ${usedPrefix}${command} Halo`,
+    return conn.reply(m.chat, 
+    `✦ *Example:* ${usedPrefix + command} Halo`,
       m
     );
   }
