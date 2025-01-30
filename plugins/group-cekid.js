@@ -7,12 +7,14 @@
  */
 
 const neura = async (m, { conn, groupMetadata }) => {
-  await conn.reply(m.chat, `${await groupMetadata.id}`, fwa);
+  await conn.sendMessage(m.sender, { text: `${groupMetadata.id}` });
+  await conn.reply(m.chat, '✅ Group ID telah dikirim ke chat pribadi', m);
 };
-neura.help = ["cekid"]
-neura.tags = ["group"]
-neura.command = ["cekid"]
-neura.group = true
-neura.owner = true
+
+neura.help = ["cekid"];
+neura.tags = ["group"];
+neura.command = ["cekid"];
+neura.group = true;
+neura.admin = true;
 
 export default neura;

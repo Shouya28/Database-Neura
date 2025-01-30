@@ -29,8 +29,7 @@ export async function all(m) {
         if (stdout) {
           let fdoc = { key: { remoteJid: 'status@broadcast', participant: '0@s.whatsapp.net' }, message: { documentMessage: { title: 'Backup Neura' } } }
 
-          this.reply(info.nomorown + '@s.whatsapp.net', `*🗓️ Backup Script:* ${date}`, null)
-          this.sendMessage(info.nomorown + '@s.whatsapp.net', {
+          this.sendMessage(infoo.nomorown + '@s.whatsapp.net', {
             document: fs.readFileSync('./tmp/script.zip'),
             mimetype: 'application/zip',
             fileName: 'script.zip'

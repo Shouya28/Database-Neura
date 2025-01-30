@@ -7,6 +7,8 @@
  */
  
 import axios from "axios";
+import axios from "axios";
+
 const douyin = async (url) => {
   const api = "https://lovetik.app/api/ajaxSearch";
   const payload = { q: url, lang: "en" };
@@ -40,12 +42,23 @@ const douyin = async (url) => {
 
   const downloadUrls =
     extractData.match(/https:\/\/(dl\.snapcdn\.app|v\d+-cold\.douyinvod\.com)\/get\?token=[^"]+/g) || [];
+
   const thumbnailMatch = /<img src="([^"]+)"/.exec(extractData);
   const thumbnail = thumbnailMatch ? thumbnailMatch[1] : null;
+
   const titleMatch = /<h3>(.*?)<\/h3>/.exec(extractData);
   const title = titleMatch ? titleMatch[1] : null;
 
-  return { title, thumbnail, downloadUrls };
+  const imageUrls = extractData.match(/https:\/\/[^\s"]+\.(?:jpg|jpeg|png|webp)[^\s"']*/gi) || [];
+  const uniqueImageUrls = [...new Set(imageUrls)].filter(url => url !== thumbnail);
+
+  return {
+    title,
+    thumbnail,
+    downloadUrls,
+    images: uniqueImageUrls,
+    isSlidePost: uniqueImageUrls.length > 0
+  };
 };
 
 const neura = async (m, { conn, text, command, usedPrefix }) => {
@@ -61,27 +74,34 @@ const neura = async (m, { conn, text, command, usedPrefix }) => {
     return m.reply(result.error);
   }
 
-  const { title, downloadUrls } = result;
+  const { title, downloadUrls, images, isSlidePost } = result;
 
-  if (downloadUrls.length > 0) {
+  if (!isSlidePost && downloadUrls.length > 0) {
     const videoUrl = downloadUrls[0];
-    const musicUrl = downloadUrls[downloadUrls.length - 1];
-
     const video = await axios.get(videoUrl, { responseType: "arraybuffer" });
     const videoBuffer = Buffer.from(video.data);
     await conn.sendFile(m.chat, videoBuffer, "video.mp4", `*Judul:* ${title}`, m);
 
+    const musicUrl = downloadUrls[downloadUrls.length - 1];
     const music = await axios.get(musicUrl, { responseType: "arraybuffer" });
     const musicBuffer = Buffer.from(music.data);
     await conn.sendFile(m.chat, musicBuffer, "music.mp3", "Ryzxell", m, false, {
       mimetype: "audio/mpeg",
     });
-  } else {
-    m.reply(error);
+  }
+
+  if (isSlidePost && images.length > 0) {
+    let sentCount = 0;
+    for (const imageUrl of images) {
+      const image = await axios.get(imageUrl, { responseType: "arraybuffer" });
+      const imageBuffer = Buffer.from(image.data);
+      await conn.sendFile(m.sender, imageBuffer, "slide.jpg", `*Bagian ${++sentCount} dari:* ${title}`);
+    }
+    await m.reply('Semua gambar slide telah dikirim di private chat');
   }
 };
 
-neura.command = ["douyin", "dy", "tiktok", "tt"]
+neura.command = ["douyin", "dy", "tiktok", "tt"];
 neura.help = ["douyin", "tiktok"];
 neura.tags = ["dl"];
 neura.error = 0;

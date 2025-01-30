@@ -13,7 +13,7 @@ const hydro = {
   ask: async ({ content, fileBuffer, systemInstruction }) => {
     const formData = new FormData()
     formData.append('content', content)
-    formData.append('model', 'hydroai-neptune-32B-V2.0')
+    formData.append('model', 'yanzgpt-legacy-72b-v3.0')
     if (fileBuffer) formData.append('file', fileBuffer)
     if (systemInstruction) formData.append('system', systemInstruction)
 
@@ -34,8 +34,8 @@ export async function neura(m, { conn, text, usedPrefix, command }) {
   conn.reply(m.chat, `*Answer from ${command} AI:*\n${response}`, fwa)
 }
 
-neura.command = ['hydro'];
-neura.help = ['hydro'];
+neura.command = ['yanzgpt'];
+neura.help = ['yanzgpt'];
 neura.tags = ['ai'];
 neura.premium = true;
 neura.error = 0;

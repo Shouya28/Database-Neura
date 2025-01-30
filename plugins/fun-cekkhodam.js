@@ -1,7 +1,7 @@
 
 const neura = async (m, { conn, command, text }) => {
   if (!text) {
-    return conn.reply(m.chat, 'Nama nya mana yang mau di cek khodam nya?', m);
+    return conn.reply(m.chat, `✦ *Example:* ${usedPrefix + command} Agus`, m);
   }
 
   const khodamList = [

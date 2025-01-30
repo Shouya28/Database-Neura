@@ -48,6 +48,7 @@ const neura = async (m, { conn }) => {
 neura.help = ["cfspeedtest"];
 neura.tags = ["info"];
 neura.command = /^(cfspeedtest)$/i;
+neura.error = 0;
 
 export default neura;
 

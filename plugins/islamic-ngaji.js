@@ -135,6 +135,7 @@ const neura = async (m, { conn, args }) => {
 
 neura.help = ['ngaji'];
 neura.tags = ['islamic'];
-neura.command = /^ngaji$/i;
+neura.command = ["ngaji"];
+neura.error = 0;
 
 export default neura;
