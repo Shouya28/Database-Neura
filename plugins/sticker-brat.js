@@ -12,17 +12,19 @@ import fs from 'fs';
 import path from 'path';
 import { Sticker } from 'wa-sticker-formatter';
 
-let neura = async (m, { conn, text, usedPrefix }) => {
+let neura = async (m, { conn, text, command, usedPrefix }) => {
   text = text || (m.quoted && m.quoted.text);
 
   if (!text) {
-    return m.reply(`❗ *Format Salah* ❗\n\nGunakan perintah ini dengan format:\n• *${usedPrefix}brat <teks>*\n• Atau reply pesan dengan perintah tanpa teks.\n\n_Contoh:_\n${usedPrefix}brat Aku suka kucing\nTambahkan *--animated* untuk animasi.`);
+    return m.reply(
+  `✦ *Format Salah!* ✦\n\nGunakan perintah ini dengan format:\n• *${usedPrefix}${command} <teks>*\n• Atau balas pesan dengan perintah tanpa teks.\n\n_Contoh:_\n${usedPrefix}${command} Neura\nTambahkan *--gif* setelah cmd untuk animasi.`
+);
   }
 
   const isAnimated = text.includes('--gif');
   const textWithoutAnimated = text.replace('--gif', '').trim();
 
-  conn.sendMessage(m.chat, { react: { text: '🕒', key: m.key } });
+  conn.sendMessage(m.chat, { react: { text: '😎', key: m.key } });
 
   if (isAnimated) {
     const tempDir = path.join(process.cwd(), 'tmp');
@@ -58,6 +60,7 @@ let neura = async (m, { conn, text, usedPrefix }) => {
     const response = await axios.get(`https://brat.caliphdev.com/api/brat?text=${encodeURIComponent(textWithoutAnimated)}`, { responseType: 'arraybuffer' });
     const sticker = new Sticker(response.data, { pack: stickpack, author: stickauth, type: 'image/png' });
     const stickerBuffer = await sticker.toBuffer();
+    conn.sendMessage(m.chat, { react: { text: '', key: m.key } });
     await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m });
   }
 };

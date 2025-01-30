@@ -8,7 +8,7 @@
 
 const neura = async (m, { conn, groupMetadata }) => {
   await conn.sendMessage(m.sender, { text: `${groupMetadata.id}` });
-  await conn.reply(m.chat, '✅ Group ID telah dikirim ke chat pribadi', m);
+  await conn.reply(m.chat, '✓ Group ID telah dikirim ke chat pribadi', m);
 };
 
 neura.help = ["cekid"];

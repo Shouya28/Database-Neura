@@ -9,12 +9,10 @@
 import { createHash } from 'crypto';
 import axios from "axios";
 
-// Constants
 const VOICES = ["bella", "echilling", "adam", "prabowo", "thomas_shelby", "michi_jkt48", "jokowi", "megawati", "nokotan", "boboiboy"];
 const BASE_URL = "https://omniplex.ai/api";
 const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
 
-// Real-time date and time handling with Asia/Jakarta timezone
 const getTimeContext = () => {
   const now = new Date();
   const options = {
@@ -48,11 +46,9 @@ const getTimeContext = () => {
   };
 };
 
-// Initialize database
 global.db.data.autovn = global.db.data.autovn || {};
 global.db.data.users = global.db.data.users || {};
 
-// Enhanced AI context generation
 const generateAIContext = () => {
   const timeContext = getTimeContext();
   return `You are Neura, an advanced AI Assistant created by Ryzxell. 
@@ -76,7 +72,6 @@ Dynamic response guidelines:
 - Keep responses contextually appropriate to the time`;
 };
 
-// Enhanced omniplexAi function with real-time context
 async function omniplexAi(prompt) {
   const headers = {
     origin: BASE_URL.replace("/api", ""),
@@ -106,7 +101,6 @@ async function omniplexAi(prompt) {
   }
 }
 
-// Main neura function with enhanced error handling
 let neura = async (m, { conn, text, usedPrefix, command }) => {
   try {
     if (command === "autovn") {
@@ -169,7 +163,6 @@ let neura = async (m, { conn, text, usedPrefix, command }) => {
   }
 };
 
-// Enhanced message handler
 neura.before = async (m, { conn }) => {
   if (m.isBaileys || !m.text || /^[.!#/\\]/.test(m.text)) return;
   if (!global.db.data.autovn[m.sender]) return;

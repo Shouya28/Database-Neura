@@ -41,29 +41,24 @@ async function omniplexAi(prompt) {
   return response.data;
 }
 
-const neura = async (m, { text, usedPrefix, command }) => {
-  if (!text) {
-    return m.reply(
-      `✦ *Format salah !*\n\n` +
-      `*Masukan teks atau reply pesan yang ingin*\n` +
-      `*kamu tanyakan kepada ${command}*\n\n` +
-      `> Example:\n` +
-      `> ${usedPrefix + command} Halo`,
-      m.chat,
-      { quoted: m }
-    );
-  }
+const neura = async (m, { args, usedPrefix, command }) => {
+  const cmdText = args.length > 0 ? args.join(" ") : "";
+const replyText = m.quoted?.text || m.quoted?.caption || m.quoted?.description || "";
+
+const text = [cmdText, replyText].filter(Boolean).join(" ").trim();
+
+if (!text) {
+  return m.reply(
+    `✦ *Format salah !*\n\n*Masukkan teks atau balas pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Contoh:\n> ${usedPrefix + command} Halo sahabat`);
+};
 
   const res = await omniplexAi(text);
-  if (!res) {
-    return m.reply(`*404* Gagal mendapatkan jawaban dari ${command}.`, m.chat, { quoted: m });
-  }
-
   await m.reply(`*Answer from ${command}:*\n${res}`, m.chat, { quoted: fwa });
 };
 
 neura.command = ["omniplex"];
 neura.tags = ["ai"];
 neura.help = ["omniplex"];
+neura.error = 0;
 
 export default neura;

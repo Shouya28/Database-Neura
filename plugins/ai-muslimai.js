@@ -32,20 +32,20 @@ const muslimai = {
   }
 };
 
-const neura = async (m, { text, conn, command, usedPrefix }) => {
-  if (!text) return m.reply(
-    `✦ *Format salah !*\n\n*Masukan teks atau reply pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Example:\n> ${usedPrefix + command} Halo sobat`,
-    m.chat, { quoted: m }
-  );
+const neura = async (m, { args, conn, command, usedPrefix }) => {
+  const cmdText = args.length > 0 ? args.join(" ") : "";
+const replyText = m.quoted?.text || m.quoted?.caption || m.quoted?.description || "";
 
-  const result = await muslimai.search(text);
+const text = [cmdText, replyText].filter(Boolean).join(" ").trim();
 
-  if (result.status === 'success') {
+if (!text) {
+  return m.reply(
+    `✦ *Format salah !*\n\n*Masukkan teks atau balas pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Contoh:\n> ${usedPrefix + command} Halo sahabat`);
+};
+
+    const result = await muslimai.search(text);
     const { answer } = result.data;
     await m.reply(`*Answer from ${command}:*\n` + answer, m.chat, { quoted: fwa });
-  } else {
-    m.reply(`Terjadi kesalahan: ${result.message || 'Gagal memproses permintaan.'}`);
-  }
 };
 
 neura.command = ['muslimai'];

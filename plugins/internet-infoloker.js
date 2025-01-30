@@ -6,11 +6,11 @@ const handler = async (m, { conn, usedPrefix, text, command }) => {
     return m.reply(`*Masukkan query pencarian!*\nContoh: ${usedPrefix + command} `);
   }
 
-  await conn.sendReact(m.chat, '✨', m.key);
+  conn.sendMessage(m.chat, { react: { text: '😎', key: m.key } });
 
   const results = await searchJobs(text);
   const resultsText = formatSearchResults(results);
-  await conn.sendReact(m.chat, ' ', m.key);
+  conn.sendMessage(m.chat, { react: { text: '', key: m.key } });
   m.reply(resultsText || "Tidak ada hasil yang ditemukan.");
 };
 

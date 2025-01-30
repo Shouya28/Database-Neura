@@ -7,7 +7,6 @@
  */
  
 import axios from "axios";
-import axios from "axios";
 
 const douyin = async (url) => {
   const api = "https://lovetik.app/api/ajaxSearch";

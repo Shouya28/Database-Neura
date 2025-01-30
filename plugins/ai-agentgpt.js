@@ -42,21 +42,26 @@ const neura = async (m, { conn, args, usedPrefix, command}) => {
   if (!db.data.dbai) db.data.dbai = {};
   if (!db.data.dbai.agentgpt) db.data.dbai.agentgpt = {};
 
-  const inputText = args.length ? args.join(" ") : m.quoted?.text || m.quoted?.caption || m.quoted?.description || null;
+  const cmdText = args.length > 0 ? args.join(" ") : "";
+  const replyText = m.quoted?.text || m.quoted?.caption || m.quoted?.description || "";
 
-  if (!inputText) return conn.reply(m.chat, `✦ *Example:* ${usedPrefix + command} Halo`, m);
+  const text = [cmdText, replyText].filter(Boolean).join(" ").trim();
+
+  if (!text) {
+  return m.reply(
+    `✦ *Format salah !*\n\n*Masukkan teks atau balas pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Contoh:\n> ${usedPrefix + command} Halo`);
+};
 
   if (db.data.dbai.agentgpt[m.key.id]) return;
 
   db.data.dbai.agentgpt[m.key.id] = true;
-  const answer = await AgentGpt(inputText);
+  const answer = await AgentGpt(text);
 
   if (!answer) throw new Error("Response is empty or invalid.");
 
   await conn.reply(m.chat, `*Answer from ${command} AI:*\n`+ answer, fwa);
 
   db.data.dbai.agentgpt[m.sender] = { key: { id: m.key.id } };
-  delete db.data.dbai.agentgpt[m.key.id];
 };
 
 neura.before = async (m, { conn }) => {

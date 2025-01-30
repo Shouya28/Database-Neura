@@ -65,34 +65,22 @@ class AI {
   };
 }
 
-const neura = async (m, { text, usedPrefix, command }) => {
-  // Jika pengguna membalas pesan dan tidak ada teks yang diberikan
-  if (m.quoted && !text) {
-    text = m.quoted.text; // Gunakan teks dari pesan yang dibalas
-  }
+const neura = async (m, { args, usedPrefix, command }) => {
+const cmdText = args.length > 0 ? args.join(" ") : "";
+const replyText = m.quoted?.text || m.quoted?.caption || m.quoted?.description || "";
 
-  // Jika tidak ada teks yang diberikan dan tidak ada pesan yang dibalas
+const text = [cmdText, replyText].filter(Boolean).join(" ").trim();
+
   if (!text) {
     return m.reply(
-      `✦ *Format salah !*
-
-*Masukkan teks atau balas pesan yang ingin*
-*kamu tanyakan kepada ${command}*
-
-> Contoh:
-> ${usedPrefix + command} Halo`, m.chat, { quoted: m });
-  }
+      `✦ *Format salah !*\n\n*Masukkan teks atau balas pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Contoh:\n> ${usedPrefix + command} Halo`);
+  };
 
   const ai = new AI();
   const res = await ai.GoodyAI(text);
-
-  if (res) {
-    await m.reply(`*Jawaban dari ${command}:*\n` + res, m.chat, { quoted: m });
-  } else {
-    console.error("Tidak ada respons dari GoodyAI");
-    await m.reply("Terjadi kesalahan saat memproses permintaan", m.chat, { quoted: m });
-  }
-}
+  
+    await m.reply(`*Jawaban dari ${command}:*\n` + res, m.chat, { quoted: fwa });
+};
 
 neura.command = ['goody'];
 neura.tags = ['ai'];

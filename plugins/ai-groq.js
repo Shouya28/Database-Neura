@@ -9,27 +9,29 @@
 import fetch from "node-fetch";
 
 const neura = async (m, { conn, args, usedPrefix, command }) => {
-  const text = args.length >= 1 ?
-    args.slice(0).join(" ") :
-    m.quoted?.text || m.quoted?.caption || m.quoted?.description || null;
 
-  if (!text) return m.reply(
-    `✦ *Format salah !*\n\n*Masukan teks atau reply pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Example:\n> ${usedPrefix + command} Halo`,
-    m.chat, { quoted: m }
-  );
+  const cmdText = args.length > 0 ? args.join(" ") : "";
+  const replyText = m.quoted?.text || m.quoted?.caption || m.quoted?.description || "";
 
+  const text = [cmdText, replyText].filter(Boolean).join(" ").trim();
+  
+  if (!text) {
+    return m.reply(
+      `✦ *Format salah !*\n\n*Masukkan teks atau balas pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Contoh:\n> ${usedPrefix + command} Halo`);
+  };
+  
   const res = await groq(text);
-  await m.reply(`*Answer from ${command}:*\n` + res, m.chat, { quoted: fwa });
+  await m.reply(`*Jawaban dari ${command}:*\n` + res, m.chat, { quoted: fwa });
 };
 
 neura.help = ["aigroq"];
 neura.tags = ["ai"];
-neura.command = ["aigroq"]
+neura.command = ["aigroq"];
 neura.error = 0;
 
 export default neura;
 
 async function groq(q) {
-  const { data } = await (await fetch("https://api-zenn.vercel.app/api/ai/groq?q=" + q)).json();
+  const { data } = await (await fetch("https://api-zenn.vercel.app/api/ai/groq?q=" + encodeURIComponent(q))).json();
   return data;
 }

@@ -39,18 +39,17 @@ const neura = async (m, { conn, args, usedPrefix, command }) => {
   if (!db.data.dbai) db.data.dbai = {};
   if (!db.data.dbai.ai4chat) db.data.dbai.ai4chat = {};
 
-  const inputText = args.length ?
-    args.join(" ") :
-    m.quoted?.text || m.quoted?.caption || m.quoted?.description || null;
+  const cmdText = args.length > 0 ? args.join(" ") : "";
+  const replyText = m.quoted?.text || m.quoted?.caption || m.quoted?.description || "";
 
-  if (!inputText) {
-    return conn.reply(m.chat, 
-    `✦ *Example:* ${usedPrefix + command} Halo`,
-      m
-    );
-  }
+const text = [cmdText, replyText].filter(Boolean).join(" ").trim();
 
-  const answer = await Ai4Chat(inputText);
+  if (!text) {
+  return m.reply(
+    `✦ *Format salah !*\n\n*Masukkan teks atau balas pesan yang ingin*\n*kamu tanyakan kepada ${command}*\n\n> Contoh:\n> ${usedPrefix + command} Halo`);
+};
+
+  const answer = await Ai4Chat(text);
   if (!answer) {
     return conn.reply(m.chat, `*404* Gagal mendapatkan jawaban dari ${command}.`, fwa);
   }
@@ -93,7 +92,7 @@ neura.before = async (m, { conn, command }) => {
 
 neura.help = ["ai4chat"];
 neura.tags = ["ai"];
-neura.command = ["ai4chat", "aichat"]
+neura.command = ["ai4chat"]
 neura.error = 0;
 
 export default neura
