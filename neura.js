@@ -10,6 +10,11 @@ import moment from 'moment-timezone'
 import canvafy from "canvafy"
 const printMessage = (await import('./lib/print.js')).default
 const { proto } = (await import('@adiwajshing/baileys')).default
+const isNumber = x => typeof x === 'number' && !isNaN(x)
+const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function() {
+  clearTimeout(this)
+  resolve()
+}, ms))
 
 export async function neura(chatUpdate) {
   this.msgqueque = this.msgqueque || []

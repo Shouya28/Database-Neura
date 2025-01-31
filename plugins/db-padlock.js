@@ -16,7 +16,7 @@ let neura = async (m, { conn, text, usedPrefix, command }) => {
   m.reply("Done!");
 };
 neura.help = ["unlockcmd", "lockcmd"];
-neura.tags = ["database"];
+neura.tags = ["db"];
 neura.command = ["lockcmd", "unlockcmd"]
 neura.premium = true; 
 neura.error = 0;

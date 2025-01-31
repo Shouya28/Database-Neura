@@ -9,7 +9,7 @@
 
 import up from '../lib/uploadImage.js'
 
-const handler = async (m, { conn, text, command }) => {
+const neura = async (m, { conn, text, command }) => {
   const q = m.quoted ? m.quoted : m;
   const mime =
     (q.msg || q).mimetype ||
