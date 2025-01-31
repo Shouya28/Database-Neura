@@ -79,7 +79,7 @@ const text = [cmdText, replyText].filter(Boolean).join(" ").trim();
   const ai = new AI();
   const res = await ai.GoodyAI(text);
   
-    await m.reply(`*Jawaban dari ${command}:*\n` + res, m.chat, { quoted: fwa });
+    await m.reply(`*Answer from ${command}:*\n` + res, m.chat, { quoted: fwa });
 };
 
 neura.command = ['goody'];

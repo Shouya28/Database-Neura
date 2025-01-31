@@ -10,11 +10,6 @@ import moment from 'moment-timezone'
 import canvafy from "canvafy"
 const printMessage = (await import('./lib/print.js')).default
 const { proto } = (await import('@adiwajshing/baileys')).default
-const isNumber = x => typeof x === 'number' && !isNaN(x)
-const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(function() {
-  clearTimeout(this)
-  resolve()
-}, ms))
 
 export async function neura(chatUpdate) {
   this.msgqueque = this.msgqueque || []
@@ -775,7 +770,7 @@ export async function neura(chatUpdate) {
         chid: '120363368059348079@newsletter',
         chlink: 'https://whatsapp.com/channel/0029Vb0aYgB2f3ELsvVHB00M',
         tautanwa: 'https://wa.me/62895324429899',
-        website: '-',
+        website: 'https://ryzxell-dev.vercel.app',
       }
 
       let invest = {
@@ -905,20 +900,21 @@ export async function neura(chatUpdate) {
    
     if (typeof m.text !== 'string')
       m.text = ''
-    if (m.text && !(isMods || isPrems)) { 
+    if (opts['queque'] && m.text && !(isMods || isPrems)) {
   let queque = this.msgqueque,
-    time = 1000 * 5;
-  const previousID = queque[queque.length - 1];
-  queque.push(m.id || m.key.id);
+    time = 1000 * 5
+  const previousID = queque[queque.length - 1]
+  queque.push(m.id || m.key.id)
   setInterval(async function() {
-    if (queque.indexOf(previousID) === -1) clearInterval(this);
-    await delay(time);
-  }, time);
+    if (queque.indexOf(previousID) === -1) clearInterval(this)
+    await delay(time)
+  }, time)
 }
 
-    if (m.isBaileys)
-      return
-    m.exp += Math.ceil(Math.random() * 10)
+if (m.isBaileys) return;
+if (_command) {
+  m.exp += Math.ceil(Math.random() * 10);
+}
 
     let usedPrefix
     let _user = global.db.data && global.db.data.users && global.db.data.users[m.sender]
@@ -1188,11 +1184,10 @@ if (plugin.age > _user.age) {
 } catch (e) {
   console.error(e)
 } finally {
-  if (m.text) { 
-  const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id);
-  if (quequeIndex !== -1) {
-    this.msgqueque.splice(quequeIndex, 1);
-  }
+  if (opts['queque'] && m.text) {
+  const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id)
+  if (quequeIndex !== -1)
+    this.msgqueque.splice(quequeIndex, 1)
 }
   let user,
     stats = global.db.data.stats

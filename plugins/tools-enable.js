@@ -277,7 +277,7 @@ break;
       global.opts["noprint"] = isEnable;
       break;
     default:
-      return conn.reply(m.chat, caption, fwa)
+      return conn.reply(m.chat, "*404* not found", fwa)
   }
   await m.reply(
     `${type} berhasil ${isEnable ? "dinyalakan" : "dimatikan"} untuk ${isAll ? "bot ini" : "chat ini"} !`,

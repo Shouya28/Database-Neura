@@ -21,7 +21,7 @@ let tags = {
   game: "GAMES",
   rpg: "RPG GAMES",
   bank: "BANKING",
-  database: "DATABASE",
+  db: "DATABASE",
   fun: "FUN STUFF",
   info: "INFO",
   sticker: "STICKER MAKER",
@@ -241,7 +241,7 @@ let neura = async (m, { conn, usedPrefix, __dirname }) => {
         thumbnailUrl: thumbnail.getRandom(),
         mediaUrl: thumbnail.getRandom(),
         mediaType: 1,
-        sourceUrl: linkk.tt,
+        sourceUrl: linkk.website,
         renderLargerThumbnail: true,
         title: infoo.wm,
         body: `Halo ` + name
