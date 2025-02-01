@@ -21,17 +21,17 @@ const neura = async (m, { conn, args, usedPrefix, command }) => {
   };
 
   const res = await claude(text);
-  await m.reply(`*Answer from ${command}:*\n` + res, m.chat, { quoted: fwa });
+  await m.reply(`*Answer from ${command}:*\n` + res, m.chat, { quoted: m });
 };
 
-neura.help = ["claude"];
+neura.help = ["deepseek"];
 neura.tags = ["ai"];
-neura.command = ["claude"];
+neura.command = ["deepseek"];
 neura.error = 0;
 
 export default neura;
 
 async function claude(content) {
-  const { data } = await (await fetch("https://api.siputzx.my.id/api/ai/claude-sonnet-35?content=" + encodeURIComponent(content))).json();
+  const { data } = await (await fetch("https://api.siputzx.my.id/api/ai/deepseek-r1?content=" + encodeURIComponent(content))).json();
   return data;
 }
