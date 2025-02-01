@@ -211,6 +211,7 @@ export async function neura(chatUpdate) {
           user.ayam = 0
         if (!isNumber(user.ojek))
           user.ojek = 0
+         
         if (!isNumber(user.polisi))
           user.polisi = 0
         if (!isNumber(user.roket))
@@ -343,6 +344,8 @@ export async function neura(chatUpdate) {
           user.premiumTime = 0
         if (!isNumber(user.joinlimit))
           user.joinlimit = 0
+        if (!isNumber(user.ratings))
+          user.ratings = 0
       } else global.db.data.users[m.sender] = {
         money: 0,
         exp: 0,

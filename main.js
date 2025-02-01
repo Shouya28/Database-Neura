@@ -158,6 +158,12 @@ if (global.pairingAuth && !conn.authState.creds.registered) {
     }, 3000);
 }
 
+if (!opts['test']) {
+setInterval(async () => {
+  if (global.db.data) await global.db.write().catch(console.error)
+}, 30 * 1000)
+}
+
 async function connectionUpdate(update) {
     const { receivedPendingNotifications, connection, lastDisconnect, isOnline, isNewLogin } = update;
 
