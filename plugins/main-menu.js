@@ -14,8 +14,11 @@ import { xpRange } from "../lib/levelling.js";
 import moment from "moment-timezone";
 import os from "os";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from 'url';
 
 let tags = {
+  feedback: "FEEDBACK",
   main: "MAIN MENU",
   anime: "ANIME",
   game: "GAMES",
@@ -59,6 +62,7 @@ const defaultMenu = {
 - *Uptime:* %muptime
 - *Database:* %rtotalreg dari %totalreg
 - *Total hit:* %totalHits
+- *Rating:* %averageRating dari 5
 %readmore`,
   header: "*—%category*",
   body: "⳺ %cmd %islimit %isPremium",
@@ -66,7 +70,21 @@ const defaultMenu = {
   after: "",
 };
 
-let neura = async (m, { conn, usedPrefix, __dirname }) => {
+const loadRatings = (filePath) => {
+  try {
+    if (!fs.existsSync(filePath)) return {};
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (error) {
+    console.error('Error membaca file rate.json:', error);
+    return {};
+  }
+};
+
+let neura = async (m, { conn, usedPrefix }) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const filePath = path.join(__dirname, '../lib/rate.json');
+
   let wib = moment.tz("Asia/Jakarta").format("HH:mm:ss");
   let _package = JSON.parse(await promises.readFile(join(__dirname, "../package.json")).catch((_) => ({}))) || {};
   let { age, exp, level, role } = global.db.data.users[m.sender] || {};
@@ -74,6 +92,12 @@ let neura = async (m, { conn, usedPrefix, __dirname }) => {
   let tag = `@${m.sender.split("@")[0]}`;
   let mode = global.opts["self"] ? "Self" : "Public";
   let user = global.db.data.users[m.sender] || {};
+  let ratings = loadRatings(filePath);
+  let allRatings = Object.values(ratings);
+  let totalRatings = allRatings.length;
+  let averageRating = totalRatings > 0 ?
+  (allRatings.reduce((sum, rating) => sum + rating, 0) / totalRatings).toFixed(2) :
+  0;
   let limit = user.premiumTime >= 1 || m.sender.split`@` [0] == infoo.nomorown ? "Infinity" : user.limit;
   let name = `${user.registered ? user.name : conn.getName(m.sender)}`;
   let status = `${m.sender.split`@`[0] == infoo.nomorown ? "Developer" : user.premiumTime >= 1 ? "Premium User" : user.level >= 1000 ? "Elite User" : "Free User"}`;
@@ -178,6 +202,7 @@ let neura = async (m, { conn, usedPrefix, __dirname }) => {
     wib,
     age,
     totalHits,
+    averageRating,
     readmore: readMore,
   };
 

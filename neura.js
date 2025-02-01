@@ -344,8 +344,6 @@ export async function neura(chatUpdate) {
           user.premiumTime = 0
         if (!isNumber(user.joinlimit))
           user.joinlimit = 0
-        if (!isNumber(user.ratings))
-          user.ratings = 0
       } else global.db.data.users[m.sender] = {
         money: 0,
         exp: 0,
