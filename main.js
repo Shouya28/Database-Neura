@@ -1,5 +1,4 @@
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '1';
-
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 import './config.js';
 import { createRequire } from "module";
 import path, { join } from 'path';
@@ -56,12 +55,12 @@ const clearSessions = () => {
         }
         
         if (cleared > 0) {
-            console.log(chalk.yellow(`Sessions cleaned successfully! Cleared ${cleared} items`));
+            console.log(chalk.yellow(`Sessions cleared successfully! Removed ${cleared} items`));
         } else {
-            console.log(chalk.red('No sessions needed to be cleaned'));
+            console.log(chalk.red('No sessions required cleaning'));
         }
     } catch (err) {
-        console.error(chalk.red(`Error accessing sessions folder: ${err.message}`));
+        console.error(chalk.red(`Error accessing sessions directory: ${err.message}`));
     }
 };
 
@@ -136,16 +135,16 @@ if (global.pairingAuth && !conn.authState.creds.registered) {
     if (!!global.pairingNumber) {
         phoneNumber = global.pairingNumber.replace(/[^0-9]/g, '');
         if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
-            console.log(chalk.bgBlack(chalk.redBright("Start with your country's WhatsApp code, Example : 62xxx")));
+            console.log(chalk.bgBlack(chalk.redBright("Please start with your country's WhatsApp code, e.g., 62xxx")));
             process.exit(0);
         }
     } else {
-        phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Please type your WhatsApp number : `)));
+        phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Please enter your WhatsApp number: `)));
         phoneNumber = phoneNumber.replace(/[^0-9]/g, '');
         
         if (!Object.keys(PHONENUMBER_MCC).some(v => phoneNumber.startsWith(v))) {
-            console.log(chalk.bgBlack(chalk.redBright("Start with your country's WhatsApp code, Example : 62xxx")));
-            phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Please type your WhatsApp number : `)));
+            console.log(chalk.bgBlack(chalk.redBright("Please start with your country's WhatsApp code, e.g., 62xxx")));
+            phoneNumber = await question(chalk.bgBlack(chalk.greenBright(`Please enter your WhatsApp number: `)));
             phoneNumber = phoneNumber.replace(/[^0-9]/g, '');
             rl.close();
         }
@@ -154,7 +153,7 @@ if (global.pairingAuth && !conn.authState.creds.registered) {
     setTimeout(async () => {
         let code = await conn.requestPairingCode(phoneNumber);
         code = code?.match(/.{1,4}/g)?.join("-") || code;
-        console.log(chalk.black(chalk.bgGreen(`Your Pairing Code : `)), chalk.black(chalk.white(code)));
+        console.log(chalk.black(chalk.bgGreen(`Your Pairing Code: `)), chalk.black(chalk.white(code)));
     }, 3000);
 }
 
@@ -168,12 +167,12 @@ async function connectionUpdate(update) {
     const { receivedPendingNotifications, connection, lastDisconnect, isOnline, isNewLogin } = update;
 
     if (isNewLogin) conn.isInit = true;
-    if (connection == 'connecting') console.log(chalk.yellow('Activating Neura, please wait a moment...'));
+    if (connection == 'connecting') console.log(chalk.yellow('Initializing Neura, please wait...'));
     if (connection == 'open') {
-        console.log(chalk.yellow('Connected successfully!'));
+        console.log(chalk.yellow('Connection established successfully!'));
         
         if (!sessionCleanupDone) {
-            console.log(chalk.yellow('Initializing session cleanup...'));
+            console.log(chalk.yellow('Initiating session cleanup...'));
             setTimeout(() => {
                 clearSessions();
                 sessionCleanupDone = true;
@@ -181,7 +180,7 @@ async function connectionUpdate(update) {
         }
         
         const deviceName = os.hostname();
-        const message = `> Neura on !!`;
+        const message = `\`Neura is now active on ${deviceName}!\``;
         try {
             await this.sendMessage(global.nomorown + `@s.whatsapp.net`, { text: message });
         } catch (err) {
@@ -189,15 +188,15 @@ async function connectionUpdate(update) {
         }
     }
     if (isOnline == true) console.log(chalk.yellow('Active Status'));
-    if (isOnline == false) console.log(chalk.red('Dead Status'));
-    if (receivedPendingNotifications) console.log(chalk.yellow('waiting for new message'));
+    if (isOnline == false) console.log(chalk.red('Inactive Status'));
+    if (receivedPendingNotifications) console.log(chalk.yellow('Awaiting new messages'));
     if (connection == 'close') {
-        console.log(chalk.red('Connection closed, attempting to reconnect...'));
+        console.log(chalk.red('Connection terminated, attempting to reconnect...'));
         const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
         if (shouldReconnect) {
             await global.reloadNeura(true);
         } else {
-            console.log(chalk.red('Connection closed due to logout'));
+            console.log(chalk.red('Connection terminated due to logout'));
             process.exit(0);
         }
     }
@@ -237,7 +236,7 @@ global.reloadNeura = async function (restatConn) {
         conn.ev.off('creds.update', conn.credsUpdate);
     }
 
-    conn.welcome = '━━━━━━◈ こんにちは ◈━━━━━━\n\n┏━ [ @subject ] ━━\n> ┃ Hi welcome to our group ✦\n┣━━━━━ INTRO ━━━━\n┃ *Nama   :*  \n┃ *Umur   :*  \n┃ *Gender :*\n┗━━━━━━━━━━━━━━━━\n\n━━━━━━◈ *Description* ◈━━━━━━\n\n@desc';
+    conn.welcome = '━━━━━━◈ こんにちは ◈━━━━━━\n\n┏━ [ @subject ] ━━\n> ┃ Welcome to our group ✦\n┣━━━━━ INTRO ━━━━\n┃ *Name   :*  \n┃ *Age    :*  \n┃ *Gender :*\n┗━━━━━━━━━━━━━━━━\n\n━━━━━━◈ *Description* ◈━━━━━━\n\n@desc';
     conn.bye = '━━━━━━◈ さよなら ◈━━━━━━  \n@user _has left the group_';
     conn.spromote = '━━━━━━◈ おめでとう ◈━━━━━━\n@user _is now an admin!_';
     conn.sdemote = '━━━━━━◈ ご苦労様 ◈━━━━━━\n@user _is no longer an admin!_';
@@ -267,129 +266,49 @@ const pluginFolder = global.__dirname(join(__dirname, './plugins/index'));
 const pluginFilter = filename => /\.js$/.test(filename);
 global.plugins = {};
 
-const libFolder = global.__dirname(join(__dirname, './lib/index'));
-const libFilter = filename => /\.js$/.test(filename);
-global.libs = {};
-
 async function filesInit() {
-    for (let filename of readdirSync(pluginFolder).filter(pluginFilter)) {
-        try {
-            let file = global.__filename(join(pluginFolder, filename));
-            const module = await import(file);
-            global.plugins[filename] = module.default || module;
-        } catch (e) {
-            conn.logger.error(e);
-            delete global.plugins[filename];
-        }
+  for (let filename of readdirSync(pluginFolder).filter(pluginFilter)) {
+    try {
+      let file = global.__filename(join(pluginFolder, filename));
+      const module = await import(file);
+      global.plugins[filename] = module.default || module;
+    } catch (e) {
+      conn.logger.error(e);
+      delete global.plugins[filename];
     }
-}
-
-async function libreload() {
-    for (let filename of readdirSync(libFolder).filter(libFilter)) {
-        try {
-            let file = global.__filename(join(libFolder, filename));
-            const module = await import(file);
-            global.libs[filename] = module.default || module;
-        } catch (e) {
-            conn.logger.error(e);
-            delete global.libs[filename];
-        }
-    }
+  }
 }
 
 filesInit().catch(console.error);
-libreload().catch(console.error);
 
 global.reload = async (_ev, filename) => {
-    if (pluginFilter(filename)) {
-        let dir = global.__filename(join(pluginFolder, filename), true);
-        if (filename in global.plugins) {
-            if (existsSync(dir)) conn.logger.info(`re - require plugin '${filename}'`);
-            else {
-                conn.logger.warn(`deleted plugin '${filename}'`);
-                return delete global.plugins[filename];
-            }
-        } else conn.logger.info(`requiring new plugin '${filename}'`);
-        
-        let err = syntaxerror(readFileSync(dir), filename, {
-            sourceType: 'module',
-            allowAwaitOutsideFunction: true
-        });
-        
-        if (err) conn.logger.error(`syntax error while loading '${filename}'\n${format(err)}`);
-        else try {
-            const module = (await import(`${global.__filename(dir)}?update=${Date.now()}`));
-            global.plugins[filename] = module.default || module;
-        } catch (e) {
-            conn.logger.error(`error require plugin '${filename}\n${format(e)}'`);
-        } finally {
-            global.plugins = Object.fromEntries(Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)));
-        }
-    }
-};
+  if (pluginFilter(filename)) {
+    let dir = global.__filename(join(pluginFolder, filename), true);
+    if (filename in global.plugins) {
+      if (existsSync(dir)) conn.logger.info(`reloading plugin '${filename}'`);
+      else {
+        conn.logger.warn(`deleted plugin '${filename}'`);
+        return delete global.plugins[filename];
+      }
+    } else conn.logger.info(`loading new plugin '${filename}'`);
 
-global.reloadlib = async (_ev, filename) => {
-    if (libFilter(filename)) {
-        let dir = global.__filename(join(libFolder, filename), true);
-        if (filename in global.libs) {
-            if (existsSync(dir)) conn.logger.info(`re - require plugin '${filename}'`);
-            else {
-                conn.logger.warn(`deleted plugin '${filename}'`);
-                return delete global.libs[filename];
-            }
-        } else conn.logger.info(`requiring new plugin '${filename}'`);
-        let err = syntaxerror(readFileSync(dir), filename, {
-            sourceType: 'module',
-            allowAwaitOutsideFunction: true
-        });
-        if (err) conn.logger.error(`syntax error while loading '${filename}'\n${format(err)}`);
-        else try {
-            const module = (await import(`${global.__filename(dir)}?update=${Date.now()}`));
-            global.libs[filename] = module.default || module;
-        } catch (e) {
-            conn.logger.error(`error require plugin '${filename}\n${format(e)}'`);
-        } finally {
-            global.libs = Object.fromEntries(Object.entries(global.libs).sort(([a], [b]) => a.localeCompare(b)));
-        }
+    let err = syntaxerror(readFileSync(dir), filename, {
+      sourceType: 'module',
+      allowAwaitOutsideFunction: true
+    });
+
+    if (err) conn.logger.error(`syntax error while loading '${filename}'\n${format(err)}`);
+    else try {
+      const module = (await import(`${global.__filename(dir)}?update=${Date.now()}`));
+      global.plugins[filename] = module.default || module;
+    } catch (e) {
+      conn.logger.error(`error loading plugin '${filename}\n${format(e)}'`);
+    } finally {
+      global.plugins = Object.fromEntries(Object.entries(global.plugins).sort(([a], [b]) => a.localeCompare(b)));
     }
+  }
 };
 
 Object.freeze(global.reload);
 watch(pluginFolder, global.reload);
-watch(libFolder, global.reloadlib);
 await global.reloadNeura();
-
-async function _quickTest() {
-    let test = await Promise.all([
-        spawn('ffmpeg'),
-        spawn('ffprobe'),
-        spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-filter_complex', 'color', '-frames:v', '1', '-f', 'webp', '-']),
-        spawn('convert'),
-        spawn('magick'),
-        spawn('gm'),
-        spawn('find', ['--version'])
-    ].map(p => {
-        return Promise.race([
-            new Promise(resolve => {
-                p.on('close', code => {
-                    resolve(code !== 127)
-                })
-            }),
-            new Promise(resolve => {
-                p.on('error', _ => resolve(false))
-            })
-        ])
-    }));
-    let [ffmpeg, ffprobe, ffmpegWebp, convert, magick, gm, find] = test;
-    console.log(test);
-    let s = global.support = { ffmpeg, ffprobe, ffmpegWebp, convert, magick, gm, find };
-    Object.freeze(global.support);
-
-    if (!s.ffmpeg) conn.logger.warn('Please install ffmpeg for sending videos (pkg install ffmpeg)');
-    if (s.ffmpeg && !s.ffmpegWebp) conn.logger.warn('Stickers may not animated without libwebp on ffmpeg (--enable-ibwebp while compiling ffmpeg)');
-    if (!s.convert && !s.magick && !s.gm) conn.logger.warn('Stickers may not work without imagemagick if libwebp on ffmpeg doesnt isntalled (pkg install imagemagick)');
-}
-
-_quickTest()
-    .then(() => conn.logger.info('All test completed'))
-    .catch(console.error);

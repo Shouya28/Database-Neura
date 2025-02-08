@@ -9,7 +9,7 @@ import { createInterface } from "readline";
 import yargs from "yargs";
 import fs from "fs";
 import path from "path";
-
+import chalk from "chalk";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(__dirname);
 const { name, author } = require(join(__dirname, "./package.json"));
@@ -17,35 +17,30 @@ const { say } = cfonts;
 const rl = createInterface(process.stdin, process.stdout);
 
 say(name, {
-  font: "pallet",
+  font: "tiny",
   align: "center",
-  colors: ["yellow", "redBright", "whiteBright"],
+  colors: ["system"],
 });
-
 say(author, {
   font: "console",
   align: "center",
-  colors: ["red", "blueBright", "yellow"],
+  gradient: ["red", "yellow"],
 });
 
 let isRunning = false;
 let startTime = null;
-
 function start(file) {
   if (isRunning) return;
   isRunning = true;
   startTime = performance.now();
-
   const args = [join(__dirname, file), ...process.argv.slice(2)];
   setupMaster({ exec: args[0], args: args.slice(1) });
-
   const p = fork();
-
   p.on("message", (data) => {
-    console.log("\x1b[38;5;39mReceived message: \x1b[0m" + data);
-
+    console.log(chalk.magenta("[ Accepted ✓ ]", data));
     switch (data) {
       case "reset":
+        console.log(chalk.red("Restarting process..."));
         p.process.kill();
         isRunning = false;
         start(file);
@@ -58,16 +53,11 @@ function start(file) {
 
   p.on("exit", (code) => {
     isRunning = false;
-    console.error("\x1b[38;5;48mProcess exited with code: \x1b[0m" + code);
-
-    if (code === "SIGKILL" || code === "SIGABRT") return start(file);
-
     const uptime = ((performance.now() - startTime) / 1000).toFixed(2);
-    console.log(
-      "\x1b[48;5;196m\x1b[38;5;15mProcess ran for \x1b[0m" +
-      uptime +
-      "\x1b[48;5;196m\x1b[38;5;15m seconds before exiting.\x1b[0m"
-    );
+    console.error(chalk.white.bgRed.bold(`Process exited with code: ${code}`));
+    console.log(chalk.bgYellow.black(`Process ran for ${uptime} seconds before exiting.`));
+    if (code === "SIGKILL" || code === "SIGABRT") return start(file);
+    console.log(chalk.red("Restarting due to signal..."));
 
     watchFile(args[0], () => {
       unwatchFile(args[0]);
@@ -76,7 +66,6 @@ function start(file) {
   });
 
   const opts = yargs(process.argv.slice(2)).exitProcess(false).parse();
-
   if (!opts["test"]) {
     if (!rl.listenerCount()) {
       rl.on("line", (line) => {
